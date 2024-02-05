@@ -5,10 +5,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -63,9 +60,29 @@ fun LemonadeBox(
             )
             .size(250.dp, 250.dp)
             .clickable {
-                currentScreen++
+                when (true) {
+                    (currentScreen == 0) -> {
+                        squeezeNumber = (2..4).random()
+                        currentScreen++
+                    }
+                    (currentScreen == 1 && squeezeNumber > 0) -> {
+                        squeezeNumber--
+                        currentScreen = 1
+                    }
+                    (currentScreen == 3) -> {
+                        currentScreen = 0
+                    }
+                    else -> {
+                        currentScreen++
+                    }
+                }
+
                 Toast
-                    .makeText(context, "Button Clicked! Screen $currentScreen", Toast.LENGTH_SHORT)
+                    .makeText(
+                        context,
+                        "Squeeze $squeezeNumber / Screen $currentScreen",
+                        Toast.LENGTH_SHORT
+                    )
                     .show()
             }
     ) {
@@ -74,6 +91,7 @@ fun LemonadeBox(
             contentDescription = stringResource(id = getContentDesc)
         )
     }
+
 }
 
 
@@ -83,53 +101,4 @@ fun LemonadeBoxPreview() {
     LemonadeBox(
         modifier = Modifier
     )
-}
-
-@Composable
-fun LemonadeBoxPattern(screenNumber: Int): @Composable () -> Unit {
-    return when (screenNumber) {
-        0 -> {
-            {
-                LemonadeBox(
-                    modifier = Modifier,
-
-                    )
-            }
-        }
-
-        1 -> {
-            {
-                LemonadeBox(
-                    modifier = Modifier,
-                )
-            }
-        }
-
-        else -> {
-            { Text(text = "else block") }
-        }
-    }
-}
-
-@Composable
-@Preview
-fun LemonadeBoxPatternPreview() {
-    var currentScreen by remember {
-        mutableStateOf(0)
-    }
-
-    Box(contentAlignment = Alignment.Center, modifier = Modifier
-        .background(
-            Color.Green,
-            shape = RoundedCornerShape(16.dp)
-        )
-        .size(300.dp, 300.dp)
-        .fillMaxSize()
-        .clickable {
-            currentScreen++
-            if (currentScreen > 2) currentScreen = 0
-        }) {
-        val lemonadeComposable = LemonadeBoxPattern(screenNumber = currentScreen)
-        lemonadeComposable()
-    }
 }

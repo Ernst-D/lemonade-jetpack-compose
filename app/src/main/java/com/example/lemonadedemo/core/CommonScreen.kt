@@ -38,7 +38,7 @@ fun CommonScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            LemonadeBox(modifier, image, contentDesc)
+            LemonadeBox(modifier)
             Text(text = screenText, modifier = Modifier.padding(vertical = 20.dp))
         }
     }
