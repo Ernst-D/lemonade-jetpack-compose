@@ -1,28 +1,60 @@
 package com.example.lemonadedemo.shared
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.lemonadedemo.R
 import com.example.lemonadedemo.ui.theme.LemonadeDemoTheme
-import com.example.lemonadedemo.ui.theme.Yellow
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun CommonScreen(image: String, textContent: String) {
+fun CommonScreen(
+    image: Painter,
+    screenText: String,
+    contentDesc: String,
+    modifier: Modifier = Modifier
+) {
     Scaffold(
         topBar = {
-        Header()
-    }) {
-        Column {
-
+            Header()
+        }) {
+        Column(
+            modifier = modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = modifier
+                    .background(
+                        colorResource(id = R.color.lemonade_box_background),
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                    .size(250.dp, 250.dp)
+            ) {
+                Image(painter = image, contentDescription = contentDesc)
+            }
+            Text(text = screenText, modifier = Modifier.padding(vertical = 20.dp))
         }
     }
 }
@@ -32,7 +64,7 @@ fun CommonScreen(image: String, textContent: String) {
 private fun Header(modifier: Modifier = Modifier) {
     // TopAppBar with custom background color
     TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = Yellow),
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = colorResource(id = R.color.header_background)),
         title = {
             Text(
                 modifier = modifier.fillMaxWidth(),
@@ -57,6 +89,10 @@ private fun HeaderPreview() {
 @Composable
 fun CommonScreenPreview() {
     LemonadeDemoTheme {
-        CommonScreen(image = "test string", textContent = "test content")
+        CommonScreen(
+            image = painterResource(id = R.drawable.lemon_squeeze),
+            screenText = stringResource(id = R.string.keep_tapping_text),
+            contentDesc = stringResource(id = R.string.keep_tapping_content_desc)
+        )
     }
 }
