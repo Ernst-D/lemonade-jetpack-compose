@@ -8,4 +8,5 @@
     <string name="lemonade_to_drink_content_desc">Glass of lemonade</string>
     <string name="empty_glass_to_drink_text">Tap the empty glass to start again</string>
     <string name="empty_glass_to_drink_content_desc">Empty glass</string>
+    <string name="header_text">Lemonade</string>
 </resources>
