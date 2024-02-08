@@ -22,6 +22,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.lemonadedemo.R
 
+class LemonadeBoxContent(val image: Int, val contentDesc: Int, val textContent: Int)
+
 @Composable
 fun LemonadeBox(
     modifier: Modifier,
@@ -35,21 +37,55 @@ fun LemonadeBox(
         mutableStateOf(0)
     }
 
-    val getImage = when (currentScreen) {
-        0 -> R.drawable.lemon_tree
-        1 -> R.drawable.lemon_squeeze
-        2 -> R.drawable.lemon_drink
-        3 -> R.drawable.lemon_restart
-        else -> R.drawable.lemon_tree
+    val getLemonadeContent: (screenNumber: Int) -> LemonadeBoxContent = {
+        when (it) {
+            0 -> LemonadeBoxContent(
+                R.drawable.lemon_tree,
+                R.string.lemon_tree_content_desc,
+                R.string.lemon_tree_content_desc
+            )
+
+            1 -> LemonadeBoxContent(
+                R.drawable.lemon_squeeze,
+                R.string.keep_tapping_content_desc,
+                R.string.keep_tapping_text
+            )
+
+            2 -> LemonadeBoxContent(
+                R.drawable.lemon_drink,
+                R.string.lemonade_to_drink_content_desc,
+                R.string.lemonade_to_drink_text
+            )
+
+            3 -> LemonadeBoxContent(
+                R.drawable.lemon_restart,
+                R.string.empty_glass_to_drink_content_desc,
+                R.string.empty_glass_to_drink_text
+            )
+
+            else -> LemonadeBoxContent(
+                R.drawable.lemon_tree,
+                R.string.lemon_tree_content_desc,
+                R.string.lemon_tree_content_desc
+            )
+        }
     }
 
-    val getContentDesc = when (currentScreen) {
-        0 -> R.string.lemon_tree_text
-        1 -> R.string.keep_tapping_content_desc
-        2 -> R.string.lemonade_to_drink_content_desc
-        3 -> R.string.keep_tapping_content_desc
-        else -> R.string.lemon_tree_text
-    }
+//    val getImage = when (currentScreen) {
+//        0 -> R.drawable.lemon_tree
+//        1 -> R.drawable.lemon_squeeze
+//        2 -> R.drawable.lemon_drink
+//        3 -> R.drawable.lemon_restart
+//        else -> R.drawable.lemon_tree
+//    }
+//
+//    val getContentDesc = when (currentScreen) {
+//        0 -> R.string.lemon_tree_text
+//        1 -> R.string.keep_tapping_content_desc
+//        2 -> R.string.lemonade_to_drink_content_desc
+//        3 -> R.string.keep_tapping_content_desc
+//        else -> R.string.lemon_tree_text
+//    }
 
     Box(
         contentAlignment = Alignment.Center,
@@ -65,13 +101,16 @@ fun LemonadeBox(
                         squeezeNumber = (2..4).random()
                         currentScreen++
                     }
+
                     (currentScreen == 1 && squeezeNumber > 0) -> {
                         squeezeNumber--
                         currentScreen = 1
                     }
+
                     (currentScreen == 3) -> {
                         currentScreen = 0
                     }
+
                     else -> {
                         currentScreen++
                     }
@@ -87,15 +126,15 @@ fun LemonadeBox(
             }
     ) {
         Image(
-            painter = painterResource(id = getImage),
-            contentDescription = stringResource(id = getContentDesc)
+            painter = painterResource(id = getLemonadeContent(currentScreen).image),
+            contentDescription = stringResource(id = getLemonadeContent(currentScreen).contentDesc)
         )
     }
 
 }
 
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun LemonadeBoxPreview() {
     LemonadeBox(
