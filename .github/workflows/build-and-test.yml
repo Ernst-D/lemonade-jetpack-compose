@@ -1,0 +1,36 @@
+name: Android <> Build and Test in BS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install bun
+      uses: oven-sh/setup-bun@v1 
+    - name: Set up JDK 19
+      uses: actions/setup-java@v3
+      with:
+        java-version: '19'
+        distribution: 'adopt'
+        cache: gradle
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Debug apk <> Build with Gradle
+      run: ./gradlew app:assembleDebug
+    
+    - name: Debug test apk <> Build with Gradle
+      run: ./gradlew app:assembleAndroidTest
+    
+    - name: Run upload script
+      run: bun run scripts/upload-app-to-bs.js
+      env:
+        BS_USERNAME: ${{ secrets.BS_USERNAME }}
+        BS_KEY: ${{ secrets.BS_KEY }}
+
