@@ -45,11 +45,16 @@ const uploadTestApp = async (username, key, fullPath) => await $`curl -u "${user
  * @param {*} deviceName 
  * @returns 
  */
-const triggerTests = async (username, key, appId, testSuiteId, deviceName = 'Samsung Galaxy S23-13.0') => await $`curl -u "${username}:${key}" \
+const triggerTests = async (username, key, appId, testSuiteId, deviceName = 'Samsung Galaxy S23-13.0') => {
+    console.log(`curl -u "${username}:${key}" \
+    -X POST "https://api-cloud.browserstack.com/app-automate/espresso/v2/build" \
+    -d '{"app": "${appId}", "testSuite": "${testSuiteId}", "devices": ["${deviceName}"]}' \
+    -H "Content-Type: application/json"`)
+    
+    return await $`curl -u "${username}:${key}" \
 -X POST "https://api-cloud.browserstack.com/app-automate/espresso/v2/build" \
--d '{"app": "${appId}", "testSuite": "${testSuiteId}", \
-"devices": ["${deviceName}"]}' \
--H "Content-Type: application/json"`;
+-d '{"app": "${appId}", "testSuite": "${testSuiteId}", "devices": ["${deviceName}"]}' \
+-H "Content-Type: application/json"`};
 
 /**
  * 
@@ -59,27 +64,48 @@ const triggerTests = async (username, key, appId, testSuiteId, deviceName = 'Sam
 const runBsCommand = async (asyncFn, ...args) => {
     try {
         const result = await asyncFn(...args);
-        const resultParsed = JSON.parse(result.stdout.toString())
+        const resultParsed = JSON.parse(result.stdout.toString());
 
-        if(!!(resultParsed?.error)){
+        console.log("RESULT PARSED")
+        console.log(resultParsed);
+
+        if (!!(resultParsed?.error)) {
             console.log(resultParsed);
             throw new Error("There is an error occurred during BrowserStack API invocation")
         }
+
+        console.log(resultParsed);
+
+        return resultParsed;
     } catch (error) {
         console.log(error);
         process.exit(1);
-    }    
+    }
 }
 
 const envVar = process.env.TEST_VAR;
 
 // console.log(envVar);
-// console.log(pathToAppApkResolved);
-// console.log(pathToAppTestsApkResolved);
+console.log(pathToAppApkResolved);
+console.log(pathToAppTestsApkResolved);
 
 // const uploadAppResponse = await uploadApp(bsUsername, bsKey, pathToAppApkResolved)
 // console.log(JSON.parse(uploadAppResponse.stdout.toString()));
 
-await runBsCommand(uploadApp, bsUsername,bsKey,pathToAppApkResolved);
+const uploadAppRes = await runBsCommand(uploadApp, bsUsername, bsKey, pathToAppApkResolved);
+const uploadTestAppRes = await runBsCommand(uploadTestApp, bsUsername, bsKey, pathToAppTestsApkResolved);
 
+console.log(uploadAppRes);
+console.log(uploadTestAppRes);
+
+const appUrl = uploadAppRes["app_url"];
+const testSuiteUrl = uploadTestAppRes["test_suite_url"];
+
+console.log(appUrl);
+console.log(testSuiteUrl);
+
+console.log("sleep for 5000 ms")
+await Bun.sleep(10000);
+
+await runBsCommand(triggerTests, bsUsername, bsKey, appUrl, testSuiteUrl);
 
