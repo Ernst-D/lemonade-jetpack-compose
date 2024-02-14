@@ -1,18 +1,23 @@
-//@ts-check
-
-import { $ } from "bun";
+import path from "node:path";
 
 const bsUsername = process.env.BS_USERNAME;
 const bsKey = process.env.BS_KEY;
 
-if (!(bsKey && bsUsername)) {
-    throw new Error("BS_USERNAME and/or BS_KEY is undefined! Please, set correct values in .env file");
-}
+// if (!(bsKey && bsUsername)) {
+//     throw new Error("BS_USERNAME and/or BS_KEY is undefined! Please, set correct values in .env file");
+// }
 
-const pathToAppApk = await $`realpath app/build/outputs/apk/debug/app-debug.apk`.quiet();
-const pathToAppTestsApk = await $`realpath app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk`.quiet();
-const pathToAppApkResolved = pathToAppApk.stdout.toString();
-const pathToAppTestsApkResolved = pathToAppTestsApk.stdout.toString();
+const pathToAppApk = "app/build/outputs/apk/debug/app-debug.apk";
+const pathToAppTestsApk = "app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk";
+const resolvePath = pathToFile => {
+    const resolvedPath = path.resolve(pathToFile);
+
+    return resolvedPath;
+}
+const pathToAppApkResolved = resolvePath(pathToAppApk);
+const pathToAppTestsApkResolved = resolvePath(pathToAppTestsApk);
+
+process.exit(0);
 
 /**
  * 

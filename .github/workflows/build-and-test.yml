@@ -10,8 +10,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Install bun
-      uses: oven-sh/setup-bun@v1 
+
+    - name: Install nodejs
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.12.1'
+      
+    - name: Install zx globally
+      run: npm i zx@7.2.3 -g
+
     - name: Set up JDK 19
       uses: actions/setup-java@v3
       with:
@@ -29,7 +36,7 @@ jobs:
       run: ./gradlew app:assembleAndroidTest
     
     - name: Run upload script
-      run: bun run scripts/upload-app-to-bs.js
+      run: zx scripts/upload-app-to-bs.js
       env:
         BS_USERNAME: ${{ secrets.BS_USERNAME }}
         BS_KEY: ${{ secrets.BS_KEY }}
